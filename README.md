@@ -1,2 +1,2 @@
 # BetNotificationsBot
-Simple Telegram Bot super cool
+Simple Telegram Bot super cool. YEAH!!!
