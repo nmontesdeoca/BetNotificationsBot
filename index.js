@@ -6,12 +6,16 @@
  *
  */
 const Telegraf = require('telegraf');
+const [FIREBASE_URL, BOT_TOKEN, URL, PORT] = process.env;
 const firebase = require('firebase').initializeApp({
-    databaseURL: process.env.FIREBASE_URL
+    databaseURL: FIREBASE_URL
 });
 const Utils = require('./utils.js');
-const app = new Telegraf(process.env.BOT_TOKEN);
+const app = new Telegraf(BOT_TOKEN);
 const players = ['nico', 'carlos', 'caño'];
+
+app.telegram.setWebhook(`${URL}/bot${BOT_TOKEN}`);
+app.startWebhook(`/bot${BOT_TOKEN}`, null, PORT)
 
 app.context.db = firebase.database().ref('/data');
 app.context.db.set({
