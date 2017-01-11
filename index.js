@@ -6,7 +6,7 @@
  *
  */
 const Telegraf = require('telegraf');
-const [FIREBASE_URL, BOT_TOKEN, URL, PORT] = process.env;
+const { FIREBASE_URL, BOT_TOKEN, URL, PORT } = process.env;
 const firebase = require('firebase').initializeApp({
     databaseURL: FIREBASE_URL
 });
