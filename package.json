@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "firebase": "^3.6.5",
     "telegraf": "^3.6.4"
   }
 }

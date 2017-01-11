@@ -8,16 +8,22 @@ const fixPlayerIndex = (index, length) => {
 }
 
 const findNextPlayer = (context, players) => {
-    const previousPlayer = context.db.previousPlayer;
+    const promise = new Promise((resolve, reject) => {
+        context.db.child('previousPlayer').once('value').then(snapshot => {
+            const previousPlayer = snapshot.val();
 
-    if (previousPlayer) {
-        const previousPlayerIndex = players.findIndex(player => previousPlayer === player);
-        const nextPlayerIndex = fixPlayerIndex(previousPlayerIndex + 1, players.length);
+            if (previousPlayer) {
+                const previousPlayerIndex = players.findIndex(player => previousPlayer === player);
+                const nextPlayerIndex = fixPlayerIndex(previousPlayerIndex + 1, players.length);
 
-        return capitalize(players[nextPlayerIndex]);
-    }
+                resolve(capitalize(players[nextPlayerIndex]));
+            }
 
-    return 'No se :/';
+            resolve('No se :/');
+        });
+    });
+
+    return promise;
 };
 
 const setLastPlayer = (context, players) => {
@@ -33,7 +39,9 @@ const setLastPlayer = (context, players) => {
     }
 
     if (player && ~players.indexOf(player.toLowerCase())) {
-        context.db.previousPlayer = player;
+        context.db.set({
+            previousPlayer: player
+        });
         return 'Ok 👍';
     }
 

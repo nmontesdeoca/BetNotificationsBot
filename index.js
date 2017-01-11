@@ -6,15 +6,19 @@
  *
  */
 const Telegraf = require('telegraf');
+const firebase = require('firebase').initializeApp({
+    databaseURL: process.env.FIREBASE_URL
+});
 const Utils = require('./utils.js');
 const app = new Telegraf(process.env.BOT_TOKEN);
 const players = ['nico', 'carlos', 'caño'];
 
-app.context.db = {
+app.context.db = firebase.database().ref('/data');
+app.context.db.set({
     previousPlayer: 'caño'
-};
+});
 
-const whoCommandFunction = context => context.reply(Utils.findNextPlayer(context, players));
+const whoCommandFunction = context => Utils.findNextPlayer(context, players).then(who => context.reply(who));
 const setCommandFunction = context => context.reply(Utils.setLastPlayer(context, players));
 
 app.command('start', context => context.reply('Hola 👋'));
