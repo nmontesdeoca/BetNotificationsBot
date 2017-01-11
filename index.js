@@ -14,13 +14,11 @@ const Utils = require('./utils.js');
 const app = new Telegraf(BOT_TOKEN);
 const players = ['nico', 'carlos', 'caño'];
 
+app.telegram.getMe().then(botInfo => (app.options.username = botInfo.username));
 app.telegram.setWebhook(`${URL}/bot${BOT_TOKEN}`);
-app.startWebhook(`/bot${BOT_TOKEN}`, null, PORT)
+app.startWebhook(`/bot${BOT_TOKEN}`, null, PORT);
 
 app.context.db = firebase.database().ref('/data');
-app.context.db.set({
-    previousPlayer: 'caño'
-});
 
 const whoCommandFunction = context => Utils.findNextPlayer(context, players).then(who => context.reply(who));
 const setCommandFunction = context => context.reply(Utils.setLastPlayer(context, players));
@@ -36,5 +34,3 @@ app.hears(/(carlos|nico|caño) hizo la jugada/i, setCommandFunction);
 
 app.command('when', whenCommandFunction);
 app.hears(/cuando es el proximo sorteo/i, whenCommandFunction);
-
-// app.startPolling();
