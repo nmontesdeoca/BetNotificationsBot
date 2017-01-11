@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "firebase": "^3.6.5",
+    "request": "^2.79.0",
     "telegraf": "^3.6.4"
   }
 }

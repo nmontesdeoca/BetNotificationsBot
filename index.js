@@ -20,6 +20,7 @@ app.context.db.set({
 
 const whoCommandFunction = context => Utils.findNextPlayer(context, players).then(who => context.reply(who));
 const setCommandFunction = context => context.reply(Utils.setLastPlayer(context, players));
+const whenCommandFunction = context => Utils.findNextDate().then(when => context.reply(when));
 
 app.command('start', context => context.reply('Hola 👋'));
 
@@ -28,5 +29,8 @@ app.hears(/a quien le toca/i, whoCommandFunction);
 
 app.command('set', setCommandFunction);
 app.hears(/(carlos|nico|caño) hizo la jugada/i, setCommandFunction);
+
+app.command('when', whenCommandFunction);
+app.hears(/cuando es el proximo sorteo/i, whenCommandFunction);
 
 app.startPolling();

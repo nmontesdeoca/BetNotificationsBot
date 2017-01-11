@@ -1,3 +1,5 @@
+const request = require('request');
+
 const capitalize = text => text && (text[0].toUpperCase() + text.slice(1));
 
 const fixPlayerIndex = (index, length) => {
@@ -48,7 +50,20 @@ const setLastPlayer = (context, players) => {
     return 'No se quien es :/ perdon';
 };
 
+const findNextDate = () => {
+    const promise = new Promise((resolve, reject) => {
+        request('http://www.labanca.com.uy', (error, response, body) => {
+            if (!error && response.statusCode == 200) {
+                resolve(body.match(/Próximo Sorteo: (\d{1,2}\/\d{2}\/\d{2,4})/)[1]);
+            }
+        });
+    });
+
+    return promise;
+};
+
 module.exports = {
+    findNextDate: findNextDate,
     fixPlayerIndex: fixPlayerIndex,
     findNextPlayer: findNextPlayer,
     setLastPlayer: setLastPlayer
