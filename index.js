@@ -37,4 +37,4 @@ app.hears(/(carlos|nico|caño) hizo la jugada/i, setCommandFunction);
 app.command('when', whenCommandFunction);
 app.hears(/cuando es el proximo sorteo/i, whenCommandFunction);
 
-app.startPolling();
+// app.startPolling();
