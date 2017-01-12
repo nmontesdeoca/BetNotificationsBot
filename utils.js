@@ -53,8 +53,12 @@ const setLastPlayer = (context, players) => {
 const findNextDate = () => {
     const promise = new Promise((resolve, reject) => {
         request('http://www.labanca.com.uy', (error, response, body) => {
+            let match;
+
             if (!error && response.statusCode == 200) {
-                resolve(body.match(/Próximo Sorteo: (\d{1,2}\/\d{2}\/\d{2,4})/)[1]);
+                match = body.match(/Próximo Sorteo: (\d{1,2}\/\d{2}\/\d{2,4})/);
+
+                resolve(match && match.length && match[1] || 'Preguntale a la banca que no me quizo decir');
             }
         });
     });
