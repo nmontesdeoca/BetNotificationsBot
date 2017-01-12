@@ -4,6 +4,7 @@ Simple Telegram Bot modular and super cool.
 ### Modules
 
 #### firebase
+---
 
 ###### public
 * getPlayers() - Get a promise that resolves with the list of players
@@ -19,6 +20,7 @@ Simple Telegram Bot modular and super cool.
 * save(path, data) - Save in the specified path the data provided
 
 #### labanca
+---
 
 ###### public
 * getNextDrawDate() - Get a promise that resolves with the date of the next draw
@@ -28,6 +30,7 @@ Simple Telegram Bot modular and super cool.
 * no idea
 
 #### config
+---
 
 ###### public
 * get(name) - Get the value of the config with the name provided, like env variables
@@ -36,6 +39,7 @@ Simple Telegram Bot modular and super cool.
 * no idea
 
 #### bot
+---
 
 ###### public
 * createBot() - Get a reference to the bot created
