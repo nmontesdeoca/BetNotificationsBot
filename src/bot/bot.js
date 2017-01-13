@@ -1,6 +1,7 @@
 const Telegraf = require('telegraf');
 
 const firebase = require('../firebase');
+const players = require('../players');
 
 const {FIREBASE_URL, BOT_TOKEN, URL, PORT} = process.env;
 
@@ -100,5 +101,5 @@ function setHandler(context) {
 }
 
 function whenHandler() {
-    context => labanca.findNextDate().then(when => context.reply(when));
+    labanca.findNextDate().then(when => context.reply(when));
 }
