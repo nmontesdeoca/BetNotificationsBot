@@ -6,6 +6,8 @@ const labanca = require('../labanca');
 
 const {FIREBASE_URL, BOT_TOKEN, URL, PORT} = process.env;
 
+const capitalize = text => text && (text[0].toUpperCase() + text.slice(1));
+
 module.exports = {
     createBot,
     configureBot,
@@ -72,26 +74,22 @@ function setHandler(context) {
             const text = textRaw.split(' ');
             let nextPlayer;
 
-            console.log('textRaw', textRaw);
-            console.log('text', text);
-
             if (text.length !== 2) {
-                return 'no soy ningun gil';
+                return 'No soy ningun gil';
             }
 
-            nextPlayer = text[1];
+            nextPlayer = text[1].toLowerCase();
 
             if (!players.isValidPlayer(nextPlayer)) {
                 return 'Si saben bien quienes son los jugadores, no jodan';
             }
 
             if (nextPlayer === currentNextPlayer) {
-                return `${nextPlayer} ya es el próximo en jugar, ya te voy a agarrar a vos!`;
+                return `${capitalize(nextPlayer)} ya es el próximo en jugar, ya te voy a agarrar a vos!`;
             }
 
             if (nextPlayer === currentLastPlayer) {
-                return `${nextPlayer} fue el último en jugar, che ${nextPlayer} me parece
-                    que estos locos te quieren cagar`;
+                return `${capitalize(nextPlayer)} fue el último en jugar, che ${capitalize(nextPlayer)} me parece que estos locos te quieren cagar`;
             }
 
             firebase.setNextPlayer(nextPlayer);
