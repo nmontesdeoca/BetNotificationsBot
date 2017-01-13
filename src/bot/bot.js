@@ -59,7 +59,8 @@ function startHandler(context) {
 }
 
 function whoHandler(context) {
-    firebase.getNextPlayer().then(player => context.reply(player));
+    firebase.getNextPlayer()
+        .then(player => context.reply(`${capitalize(player)}, no te olvides bolu!`));
 }
 
 function setHandler(context) {
