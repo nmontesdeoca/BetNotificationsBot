@@ -25,7 +25,7 @@ function getNextDrawDate() {
         firebase.getNextDrawDate().then(nextDrawDate => {
             if (nextDrawDate && Date.now() < nextDrawDate) {
                 const date = new Date(nextDrawDate);
-                const [day, month, year] = [date.getDay(), date.getMonth() + 1, date.getYear()];
+                const [day, month, year] = [date.getDate(), date.getMonth() + 1, date.getFullYear()];
 
                 resolve(`${day}/${month}/${year}`);
             } else {
