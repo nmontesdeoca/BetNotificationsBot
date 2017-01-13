@@ -40,7 +40,7 @@ function getNextDrawDate() {
                             const timestamp = date.getTime();
 
                             firebase.setNextDrawDate(timestamp);
-                            resolve(timestamp);
+                            resolve(`${day}/${month}/${year}`);
                         } else {
                             resolve('Preguntale a la banca que no me quizo decir');
                         }
