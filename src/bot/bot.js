@@ -41,6 +41,7 @@ function configureBot(bot) {
 function configureCommands(bot) {
     bot.command('start', startHandler);
     bot.command('who', whoHandler);
+    bot.command('last', lastHandler);
     bot.command('set', setHandler);
     bot.command('when', whenHandler);
 }
@@ -61,6 +62,11 @@ function startHandler(context) {
 function whoHandler(context) {
     firebase.getNextPlayer()
         .then(player => context.reply(`${capitalize(player)}, no te olvides bolu!`));
+}
+
+function lastHandler(context) {
+    firebase.getLastPlayer()
+        .then(player => context.reply(`${capitalize(player)}, ahora tranqui`));
 }
 
 function setHandler(context) {
