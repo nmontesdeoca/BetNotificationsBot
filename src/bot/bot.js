@@ -44,6 +44,7 @@ function configureCommands(bot) {
     bot.command('last', lastHandler);
     bot.command('set', setHandler);
     bot.command('when', whenHandler);
+    bot.command('check', checkHandler);
 }
 
 /**
@@ -111,4 +112,12 @@ function setHandler(context) {
 
 function whenHandler(context) {
     labanca.getNextDrawDate().then(when => context.reply(when));
+}
+
+function checkHandler(context) {
+    firebase.getNumbers().then(numbers => {
+        labanca.checkLastDraw().then(result => {
+            context.reply(JSON.stringify(result));
+        });
+    });
 }
