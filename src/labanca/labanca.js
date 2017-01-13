@@ -124,6 +124,7 @@ function verifyNumbersExecutor(options, resolve, reject) {
                 result = regExp.exec(body)[1].replace(/<br>?/g, '');
 
                 resolve({
+                    date: drawDate.replace(/-/g, '/'),
                     numbers: number.join(', '),
                     result: result
                 });
