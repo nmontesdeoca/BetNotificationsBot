@@ -117,7 +117,8 @@ function whenHandler(context) {
 function checkHandler(context) {
     firebase.getNumbers().then(numbers => {
         labanca.checkLastDraw(numbers).then(result => {
-            context.reply(JSON.stringify(result));
+            let message = result.map(line => `${line.numbers} - ${line.result}`).join('\n');
+            context.reply(message);
         });
     });
 }
