@@ -11,6 +11,8 @@ Simple Telegram Bot modular and super cool.
 * getPlayerIndex(name) - Get a promise that resolves with the index of the player with the specified name
 * getNextPlayer() - Get a promise that resolves with the name of the next player
 * getLastPlayer() - Get a promise that resolves with the name of the last player
+* getNextDrawDate() - Get a promise that resolves with the name of the last player
+* setNextDrawDate(nextDrawDate) - Set in firebase the next draw date
 * setNextPlayer(name/index) - Set in firebase the next player
 * setLastPlayer(name/index) - Set in firebase the last player
 * getNumbers() - Get a promise that resolves with the list of our numbers
@@ -26,16 +28,7 @@ Simple Telegram Bot modular and super cool.
 * checkLastDraw(numbers) - Get a promise that resolves to an object containing the result and/or prize won for the numbers provided
 
 ###### private
-* no idea
-
----
-#### config
-
-###### public
-* get(name) - Get the value of the config with the name provided, like env variables
-
-###### private
-* no idea
+* getAuthData() - Get a promise that resolves with a token and a date
 
 ---
 #### bot
