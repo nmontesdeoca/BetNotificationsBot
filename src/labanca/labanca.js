@@ -11,8 +11,8 @@ const URL_RESULTADOS = REFERER;
 const URL_VERIFICAR = `${URL_RESULTADOS}/verificar`;
 
 module.exports = {
-    getNextDrawDate: getNextDrawDate,
-    checkLastDraw: checkLastDraw
+    getNextDrawDate,
+    checkLastDraw
 };
 
 /**
