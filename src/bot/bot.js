@@ -59,7 +59,7 @@ function whoHandler(context) {
 }
 
 function setHandler(context) {
-    Promises
+    Promise
         .all([
             firebase.getNextPlayer(),
             firebase.getLastPlayer()
@@ -100,5 +100,5 @@ function setHandler(context) {
 }
 
 function whenHandler() {
-    context => Utils.findNextDate().then(when => context.reply(when));
+    context => labanca.findNextDate().then(when => context.reply(when));
 }
