@@ -2,6 +2,7 @@ const Telegraf = require('telegraf');
 
 const firebase = require('../firebase');
 const players = require('../players');
+const labanca = require('../labanca');
 
 const {FIREBASE_URL, BOT_TOKEN, URL, PORT} = process.env;
 
@@ -70,6 +71,9 @@ function setHandler(context) {
             const textRaw = context.message && context.message.text;
             const text = textRaw.split(' ');
             let nextPlayer;
+
+            console.log('textRaw', textRaw);
+            console.log('text', text);
 
             if (text.length !== 2) {
                 return 'no soy ningun gil';
