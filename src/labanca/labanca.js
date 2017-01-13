@@ -20,7 +20,37 @@ module.exports = {
  * @return {Promise}
  */
 function getNextDrawDate() {
-    return firebase.getNextDrawDate();
+    // return firebase.getNextDrawDate();
+    return new Promise((resolve, reject) => {
+        firebase.getNextDrawDate().then(nextDrawDate => {
+            if (nextDrawDate && Date.now() < nextDrawDate) {
+                const date = new Date(nextDrawDate);
+                const [day, month, year] = [date.getDay(), date.getMonth() + 1, date.getYear()];
+
+                resolve(`${day}/${month}/${year}`);
+            } else {
+                request(DOMAIN, (error, response, body) => {
+                    if (!error && response.statusCode == 200) {
+                        const match = body.match(/Próximo Sorteo: (\d{1,2}\/\d{2}\/\d{2,4})/);
+
+                        if (match && match.length && match[1]) {
+                            const dateRaw = match[1];
+                            const [day, month, year] = dateRaw.split('/');
+                            const date = new Date(`${[month, day, year].join('/')} 23:59:59`);
+                            const timestamp = date.getTime();
+
+                            firebase.setNextDrawDate(timestamp);
+                            resolve(timestamp);
+                        } else {
+                            resolve('Preguntale a la banca que no me quizo decir');
+                        }
+                    } else {
+                        reject(error, response);
+                    }
+                });
+            }
+        });
+    });
 }
 
 /**
