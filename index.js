@@ -1,36 +1,16 @@
-/**
- * proximos comandos
- *
- * /next - te dice la fecha del siguiente sorteo
- * /result - te dice el ultimo resultado disponible en la web junto con la fecha
- *
- */
-const Telegraf = require('telegraf');
-const { FIREBASE_URL, BOT_TOKEN, URL, PORT } = process.env;
-const firebase = require('firebase').initializeApp({
-    databaseURL: FIREBASE_URL
-});
-const Utils = require('./utils.js');
-const app = new Telegraf(BOT_TOKEN);
-const players = ['nico', 'carlos', 'caño'];
+const firebase = require('./src/firebase');
+const players = require('./src/players');
+const bot = require('./src/bot');
+const app = bot.createBot();
 
-app.telegram.getMe().then(botInfo => (app.options.username = botInfo.username));
-app.telegram.setWebhook(`${URL}/bot${BOT_TOKEN}`);
-app.startWebhook(`/bot${BOT_TOKEN}`, null, PORT);
+firebase.getPlayers().then(result => players.setPlayers(result));
 
-app.context.db = firebase.database().ref('/data');
+// blah blah blah
+bot.configureBot(app);
+bot.configureCommands(app);
 
-const whoCommandFunction = context => Utils.findNextPlayer(context, players).then(who => context.reply(who));
-const setCommandFunction = context => context.reply(Utils.setLastPlayer(context, players));
-const whenCommandFunction = context => Utils.findNextDate().then(when => context.reply(when));
+// magic starts to happen....now
+bot.start(app);
+// magic is in the past
 
-app.command('start', context => context.reply('Hola 👋'));
-
-app.command('who', whoCommandFunction);
-app.hears(/a quien le toca/i, whoCommandFunction);
-
-app.command('set', setCommandFunction);
-app.hears(/(carlos|nico|caño) hizo la jugada/i, setCommandFunction);
-
-app.command('when', whenCommandFunction);
-app.hears(/cuando es el proximo sorteo/i, whenCommandFunction);
+console.log('BetNotificationsBot started');
