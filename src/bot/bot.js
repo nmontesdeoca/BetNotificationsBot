@@ -105,5 +105,5 @@ function setHandler(context) {
 }
 
 function whenHandler() {
-    labanca.findNextDate().then(when => context.reply(when));
+    labanca.getNextDrawDate().then(when => context.reply(when));
 }
