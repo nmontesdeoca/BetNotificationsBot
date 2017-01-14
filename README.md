@@ -2,19 +2,19 @@
 Simple Telegram Bot modular and super cool.
 
 ### Development contribution
+
 If you want to collaborate on this project, you need to follow the next steps:
-...
-1- clone this repo
-2- execute in terminal to install dependencies: yarn (of you're still using npm, use "npm install")
-3- talk to @BotFather inside Telegram to create a new bot and grab the "bot token"
-4- create a Firebase Database and create an authentication user with email/password method
-5- grab from Firebase the apiKey and the email and password for the auth user created
-6- grab from here (Sample Firebase Data) the json to import into your firebase and import it
-7- copy example.env to .env and fill in the variables with your values
-8- to run the bot locally run "yarn start" (if you still using npm, "npm start")
-9- open Telegram and talk to your bot, it is like a simple user, find it and talk to him :)
-10- if you have any specific question related to this project, open an issue with your question ;)
-...
+
+1. clone this repo
+2. execute in terminal to install dependencies: yarn (of you're still using npm, use "npm install")
+3. talk to @BotFather inside Telegram to create a new bot and grab the "bot token"
+4. create a Firebase Database and create an authentication user with email/password method
+5. grab from Firebase the apiKey and the email and password for the auth user created
+6. grab from here (Sample Firebase Data) the json to import into your firebase and import it
+7. copy example.env to .env and fill in the variables with your values
+8. to run the bot locally run "yarn start" (if you still using npm, "npm start")
+9. open Telegram and talk to your bot, it is like a simple user, find it and talk to him :)
+10. if you have any specific question related to this project, open an issue with your question ;)
 
 ### Modules
 
@@ -84,12 +84,23 @@ If you want to collaborate on this project, you need to follow the next steps:
 ## Directory structure:
 ```
 ├── src/
-│   ├── labanca.js
-│   ├── bot.js
-│   ├── firebase.js
+│   ├── bot
+│   │   ├── bot.js
+│   │   ├── index.js
+│   ├── firebase
+│   │   ├── firebase.js
+│   │   ├── index.js
+│   ├── labanca
+│   │   ├── labanca.js
+│   │   ├── index.js
+│   ├── players
+│   │   ├── players.js
+│   │   ├── index.js
 ├── .gitignore
+├── example.env
 ├── index.js
 ├── package.json
+├── Procfile
 ├── README.md
 ├── yarn.lock
 ```
