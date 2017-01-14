@@ -7,12 +7,14 @@ const firebase = require('../firebase');
 const HOST = 'www3.labanca.com.uy';
 const DOMAIN = `http://${HOST}`;
 const REFERER = `${DOMAIN}/resultados/cincodeoro`;
-const URL_RESULTADOS = REFERER;
-const URL_VERIFICAR = `${URL_RESULTADOS}/verificar`;
+const RESULTS_URL = REFERER;
+const VERIFY_URL = `${RESULTS_URL}/verificar`;
+const VERIFY_TICKET_URL = `${RESULTS_URL}/verificar_jugada_boleta`;
 
 module.exports = {
     getNextDrawDate,
-    checkLastDraw
+    checkLastDraw,
+    verifyTicket
 };
 
 /**
@@ -88,8 +90,7 @@ function verifyNumbersExecutor(options, resolve, reject) {
     const {authenticityToken, drawDate, number} = options;
 
     request.post({
-        url: URL_VERIFICAR,
-        followAllRedirects: true,
+        url: VERIFY_URL,
         headers: {
             'Accept': 'text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01',
             'Accept-Language': 'es-419,es;q=0.8',
@@ -141,7 +142,7 @@ function getAuthData() {
 }
 
 function getAuthDataExecutor(resolve, reject) {
-    return request(URL_RESULTADOS, (error, response, body) => {
+    return request(RESULTS_URL, (error, response, body) => {
         if (!error && response.statusCode == 200) {
             env(body, (errors, window) => {
                 const $ = jQuery(window);
@@ -157,4 +158,75 @@ function getAuthDataExecutor(resolve, reject) {
             });
         }
     });
+}
+
+/**
+ * Get a promise that resolves to an object containing the result and/or prize won for the ticketNumber provided
+ * @param  {Number} ticketNumber
+ * @return {Promise}
+ */
+function verifyTicket(ticketNumber) {
+    return new Promise(verifyTicketExecutor.bind(this, ticketNumber));
+}
+
+/**
+ * Executor function for verifyTicket
+ * @param  {Number} ticketNumber
+ * @param  {Promise.resolve} resolve
+ * @param  {Promise.reject} reject
+ * @return {void}
+ */
+function verifyTicketExecutor(ticketNumber, resolve, reject) {
+    getAuthData()
+        .then(authData => {
+            const {authenticityToken, drawDate} = authData;
+
+            request.post({
+                url: VERIFY_TICKET_URL,
+                headers: {
+                    'Accept': 'text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01',
+                    'Accept-Language': 'es-419,es;q=0.8',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'Host': HOST,
+                    'Referer': REFERER,
+                    'X-CSRF-Token': authenticityToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                form: {
+                    fecha_sorteo: drawDate,
+                    nro_boleta: ticketNumber
+                }
+            }, (error, httpResponse, body) => {
+                if (!error) {
+                    let partialBodyParts = body.split('.html(');
+
+                    if (partialBodyParts && partialBodyParts.length > 1) {
+                        partialBodyParts = partialBodyParts[1].split(');');
+
+                        if (partialBodyParts && partialBodyParts.length) {
+                            const partialBody = partialBodyParts[0]
+                                .replace(/\\n/g, '')
+                                .replace(/\\"/g, '"')
+                                .replace(/\\\//g, '/');
+
+                            env(partialBody, (envError, window) => {
+                                if (!envError) {
+                                    const $ = jQuery(window);
+                                    resolve({
+                                        date: drawDate,
+                                        ticketNumber,
+                                        result: $('.resultado').text().trim()
+                                    });
+                                } else {
+                                    reject(envError)
+                                }
+                            });
+                        }
+                    }
+                } else {
+                    reject(error, httpResponse);
+                }
+            });
+        })
+        .catch(error => console.error(error));
 }
