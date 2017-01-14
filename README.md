@@ -4,7 +4,16 @@ Simple Telegram Bot modular and super cool.
 ### Development contribution
 If you want to collaborate on this project, you need to follow the next steps:
 ...
-To Be Continued
+1- clone this repo
+2- execute in terminal to install dependencies: yarn (of you're still using npm, use "npm install")
+3- talk to @BotFather inside Telegram to create a new bot and grab the "bot token"
+4- create a Firebase Database and create an authentication user with email/password method
+5- grab from Firebase the apiKey and the email and password for the auth user created
+6- grab from here (Sample Firebase Data) the json to import into your firebase and import it
+7- copy example.env to .env and fill in the variables with your values
+8- to run the bot locally run "yarn start" (if you still using npm, "npm start")
+9- open Telegram and talk to your bot, it is like a simple user, find it and talk to him :)
+10- if you have any specific question related to this project, open an issue with your question ;)
 ...
 
 ### Modules
@@ -83,4 +92,16 @@ To Be Continued
 ├── package.json
 ├── README.md
 ├── yarn.lock
+```
+
+## Sample Firebase Data
+```
+{
+  "lastPlayer" : 2,
+  "nextDrawDate" : 1484524799000,
+  "nextPlayer" : 0,
+  "numbers" : [ [ 1, 2, 3, 4, 5 ], [ 6, 7, 8, 9, 10 ] ],
+  "players" : [ "jorgito", "oreja", "braian" ]
+}
+
 ```
