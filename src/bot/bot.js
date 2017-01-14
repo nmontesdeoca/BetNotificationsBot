@@ -4,7 +4,7 @@ const firebase = require('../firebase');
 const players = require('../players');
 const labanca = require('../labanca');
 
-const {FIREBASE_URL, BOT_TOKEN, URL, PORT} = process.env;
+const {FIREBASE_URL, BOT_TOKEN, URL, PORT, NODE_ENV} = process.env;
 
 const capitalize = text => text && (text[0].toUpperCase() + text.slice(1));
 
@@ -29,8 +29,13 @@ function createBot() {
  * @return {void}
  */
 function configureBot(bot) {
-    bot.telegram.getMe().then(botInfo => (bot.options.username = botInfo.username));
-    bot.telegram.setWebhook(`${URL}/bot${BOT_TOKEN}`);
+    bot.telegram.getMe()
+        .then(botInfo => (bot.options.username = botInfo.username))
+        .catch(error => console.error(error));
+
+    if (NODE_ENV === 'production') {
+        bot.telegram.setWebhook(`${URL}/bot${BOT_TOKEN}`);
+    }
 }
 
 /**
@@ -53,7 +58,13 @@ function configureCommands(bot) {
  * @return {void}
  */
 function start(bot) {
-    bot.startWebhook(`/bot${BOT_TOKEN}`, null, PORT);
+    if (NODE_ENV === 'production') {
+        bot.startWebhook(`/bot${BOT_TOKEN}`, null, PORT);
+    } else if (NODE_ENV === 'development') {
+        bot.startPolling();
+    } else {
+        console.log(`NODE_ENV is ${NODE_ENV} and the bot is not started`);
+    }
 }
 
 function startHandler(context) {
@@ -62,12 +73,14 @@ function startHandler(context) {
 
 function whoHandler(context) {
     firebase.getNextPlayer()
-        .then(player => context.reply(`${capitalize(player)}, no te olvides bolu!`));
+        .then(player => context.reply(`${capitalize(player)}, no te olvides bolu!`))
+        .catch(error => console.error(error));
 }
 
 function lastHandler(context) {
     firebase.getLastPlayer()
-        .then(player => context.reply(`${capitalize(player)}, ahora tranqui`));
+        .then(player => context.reply(`${capitalize(player)}, ahora tranqui`))
+        .catch(error => console.error(error));
 }
 
 function setHandler(context) {
@@ -107,19 +120,26 @@ function setHandler(context) {
         })
         .then(message => {
             context.reply(message);
-        });
+        })
+        .catch(error => console.error(error));
 }
 
 function whenHandler(context) {
-    labanca.getNextDrawDate().then(when => context.reply(when));
+    labanca.getNextDrawDate()
+        .then(when => context.reply(when))
+        .catch(error => console.error(error));
 }
 
 function checkHandler(context) {
-    firebase.getNumbers().then(numbers => {
-        labanca.checkLastDraw(numbers).then(result => {
-            // TODO: fix this fast result[0]
-            context.reply(`Sorteo de la fecha: ${result[0].date}`);
-            result.map(line => context.reply(`${line.numbers} - ${line.result}`));
-        });
-    });
+    firebase.getNumbers()
+        .then(numbers => {
+            labanca.checkLastDraw(numbers)
+                .then(result => {
+                    // TODO: fix this fast result[0]
+                    context.reply(`Sorteo de la fecha: ${result[0].date}`);
+                    result.map(line => context.reply(`${line.numbers} - ${line.result}`));
+                })
+                .catch(error => console.error(error));
+        })
+        .catch(error => console.error(error));
 }

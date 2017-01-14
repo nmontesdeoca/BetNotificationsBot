@@ -49,7 +49,7 @@ function getNextDrawDate() {
                     }
                 });
             }
-        });
+        }).catch(error => console.error(error));
     });
 }
 
@@ -63,20 +63,21 @@ function checkLastDraw(numbers) {
 }
 
 function checkLastDrawExecutor(numbers, resolve, reject) {
-    getAuthData().then(authData => {
-        const {authenticityToken, drawDate} = authData;
+    getAuthData()
+        .then(authData => {
+            const {authenticityToken, drawDate} = authData;
 
-        const promises = numbers.map(number => verifyNumbers({
-            number,
-            authenticityToken,
-            drawDate
-        }));
+            const promises = numbers.map(number => verifyNumbers({
+                number,
+                authenticityToken,
+                drawDate
+            }));
 
-        Promise.all(promises).then(
-            values => resolve(values),
-            error => reject(error)
-        );
-    });
+            Promise.all(promises)
+                .then(values => resolve(values), error => reject(error))
+                .catch(error => console.error(error));
+        })
+        .catch(error => console.error(error));
 }
 
 function verifyNumbers(options) {

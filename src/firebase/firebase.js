@@ -1,9 +1,15 @@
 const players = require('../players');
 
-const {FIREBASE_URL} = process.env;
+const {FIREBASE_URL, FIREBASE_USER_EMAIL, FIREBASE_USER_PASSWORD, FIREBASE_API_KEY} = process.env;
+
 const firebase = require('firebase').initializeApp({
+    apiKey: FIREBASE_API_KEY,
     databaseURL: FIREBASE_URL
 });
+
+firebase.auth()
+    .signInWithEmailAndPassword(FIREBASE_USER_EMAIL, FIREBASE_USER_PASSWORD)
+    .catch(error => console.error(error));
 
 module.exports = {
     getPlayers,
@@ -101,12 +107,14 @@ function getNumbersExecutor(resolve, reject) {
 }
 
 function getSnapshotValue(resolve, reject, path, processResultFunction) {
-    firebase.database().ref(path).once('value').then(
-        snapshot => resolve(
-            processResultFunction ?
-            processResultFunction(snapshot.val()) :
-            snapshot.val()
-        ),
-        error => reject(error)
-    );
+    firebase.database().ref(path).once('value')
+        .then(
+            snapshot => resolve(
+                processResultFunction ?
+                processResultFunction(snapshot.val()) :
+                snapshot.val()
+            ),
+            error => reject(error)
+        )
+        .catch(error => console.error(error));
 }

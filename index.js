@@ -3,7 +3,9 @@ const players = require('./src/players');
 const bot = require('./src/bot');
 const app = bot.createBot();
 
-firebase.getPlayers().then(result => players.setPlayers(result));
+firebase.getPlayers()
+    .then(result => players.setPlayers(result))
+    .catch(error => console.error(error));
 
 // blah blah blah
 bot.configureBot(app);
