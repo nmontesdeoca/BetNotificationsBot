@@ -4,7 +4,7 @@ const firebase = require('../firebase');
 const players = require('../players');
 const labanca = require('../labanca');
 
-const {FIREBASE_URL, BOT_TOKEN, URL, PORT, NODE_ENV} = process.env;
+const {BOT_TOKEN, URL, PORT, NODE_ENV} = process.env;
 
 const capitalize = text => text && (text[0].toUpperCase() + text.slice(1));
 
