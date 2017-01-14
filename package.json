@@ -1,20 +1,25 @@
 {
-  "name": "betbot",
+  "name": "bet-notifications-bot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "nf start"
+  },
+  "engines": {
+    "node": "7.4.0"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Nicolas Montesdeoca <nico.racing.99@gmail.com>",
+  "license": "MIT",
   "dependencies": {
     "firebase": "^3.6.5",
+    "foreman": "^2.0.0",
     "jquery": "^3.1.1",
     "jsdom": "^9.9.1",
     "request": "^2.79.0",
     "telegraf": "^3.6.4"
-  }
+  },
+  "repository": "git@github.com:nmontesdeoca/BetNotificationsBot.git"
 }
