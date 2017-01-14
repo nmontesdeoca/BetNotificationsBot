@@ -21,5 +21,8 @@
     "request": "^2.79.0",
     "telegraf": "^3.6.4"
   },
-  "repository": "git@github.com:nmontesdeoca/BetNotificationsBot.git"
+  "repository": "git@github.com:nmontesdeoca/BetNotificationsBot.git",
+  "devDependencies": {
+    "eslint": "^3.13.1"
+  }
 }
