@@ -44,13 +44,16 @@ If you want to collaborate on this project, you need to follow the next steps:
 ###### public
 * getNextDrawDate() - Get a promise that resolves with the date of the next draw
 * checkLastDraw(numbers) - Get a promise that resolves to an object containing the result and/or prize won for the numbers provided
+* verifyTicket(ticketNumber) - Get a promise that resolves to an object containing the result and/or prize won for the ticketNumber provided
 
 ###### private
 * getAuthData() - Get a promise that resolves with a token and a date
 * getAuthDataExecutor(resolve, reject) - Executor function for the getAuthData function
 * verifyNumbers(options) - Get a promise that resolves with the result for a specific set of numbers
-* verifyNumbersExecutor(resolve, reject) - Executor function for the verifyNumbers function
-* checkLastDrawExecutor(resolve, reject) - Executor function for the checkLastDraw function
+* verifyNumbersExecutor(options, resolve, reject) - Executor function for the verifyNumbers function
+* checkLastDrawExecutor(numbers, resolve, reject) - Executor function for the checkLastDraw function
+* verifyTicketExecutor(ticketNumber, resolve, reject) - Executor function for the verifyTicket function
+* extractHTML(body) - extract the html embedded in labanca service response
 
 ---
 #### bot

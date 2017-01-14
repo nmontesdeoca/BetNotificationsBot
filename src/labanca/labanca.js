@@ -118,19 +118,21 @@ function verifyNumbersExecutor(options, resolve, reject) {
         }
     }, (error, httpResponse, body) => {
         if (!error) {
-            const regExp = /result\\">([^\/]*)/;
-            const thereIsResult = regExp.test(body);
-            let result;
+            const partialBody = extractHTML(body);
 
-            if (thereIsResult) {
-                result = regExp.exec(body)[1].replace(/<br>?/g, '');
+            env(partialBody, (envError, window) => {
+                if (!envError) {
+                    const $ = jQuery(window);
 
-                resolve({
-                    date: drawDate,
-                    numbers: number.join(', '),
-                    result: result
-                });
-            }
+                    resolve({
+                        date: drawDate,
+                        numbers: number.join(', '),
+                        result: $('.result').text().trim()
+                    });
+                } else {
+                    reject(envError)
+                }
+            });
         } else {
             reject(error, httpResponse);
         }
@@ -145,11 +147,15 @@ function getAuthDataExecutor(resolve, reject) {
     return request(RESULTS_URL, (error, response, body) => {
         if (!error && response.statusCode == 200) {
             env(body, (errors, window) => {
-                const $ = jQuery(window);
-                resolve({
-                    authenticityToken: $('[name="authenticity_token"]').val(),
-                    drawDate: $('[name="fecha_sorteo"]').val()
-                });
+                if (!errors) {
+                    const $ = jQuery(window);
+                    resolve({
+                        authenticityToken: $('[name="authenticity_token"]').val(),
+                        drawDate: $('[name="fecha_sorteo"]').val()
+                    });
+                } else {
+                    reject(errors);
+                }
             });
         } else {
             reject({
@@ -198,35 +204,54 @@ function verifyTicketExecutor(ticketNumber, resolve, reject) {
                 }
             }, (error, httpResponse, body) => {
                 if (!error) {
-                    let partialBodyParts = body.split('.html(');
+                    const partialBody = extractHTML(body);
 
-                    if (partialBodyParts && partialBodyParts.length > 1) {
-                        partialBodyParts = partialBodyParts[1].split(');');
-
-                        if (partialBodyParts && partialBodyParts.length) {
-                            const partialBody = partialBodyParts[0]
-                                .replace(/\\n/g, '')
-                                .replace(/\\"/g, '"')
-                                .replace(/\\\//g, '/');
-
-                            env(partialBody, (envError, window) => {
-                                if (!envError) {
-                                    const $ = jQuery(window);
-                                    resolve({
-                                        date: drawDate,
-                                        ticketNumber,
-                                        result: $('.resultado').text().trim()
-                                    });
-                                } else {
-                                    reject(envError)
-                                }
+                    env(partialBody, (envError, window) => {
+                        if (!envError) {
+                            const $ = jQuery(window);
+                            resolve({
+                                date: drawDate,
+                                ticketNumber,
+                                result: $('.resultado').text().trim()
                             });
+                        } else {
+                            reject(envError)
                         }
-                    }
+                    });
                 } else {
                     reject(error, httpResponse);
                 }
             });
         })
         .catch(error => console.error(error));
+}
+
+/**
+ * extract the html embedded in labanca service response
+ * @param  {String} body
+ * @return {String}
+ */
+function extractHTML(body) {
+    let partialBodyParts;
+
+    if (!body) {
+        return '';
+    }
+
+    partialBodyParts = body.split('.html(');
+
+    if (!partialBodyParts || partialBodyParts.length < 2) {
+        return body;
+    }
+
+    partialBodyParts = partialBodyParts[1].split(');');
+
+    if (!partialBodyParts || !partialBodyParts.length) {
+        return body;
+    }
+
+    return partialBodyParts[0]
+        .replace(/\\n/g, '')
+        .replace(/\\"/g, '"')
+        .replace(/\\\//g, '/');
 }
