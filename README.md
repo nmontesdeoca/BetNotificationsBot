@@ -9,7 +9,7 @@ Simple Telegram Bot modular and super cool.
 * /when
 * /last
 * /check
-* /verify {ticketNumber}
+* /verify {ticketNumber} o {1} {2} {3} {4} {5}
 
 ### Development contribution
 

@@ -195,7 +195,7 @@ function verifyHandler(context) {
     let ticketNumber;
 
     if (!text || (text.length !== 2 && text.length !== 6)) {
-        context.reply('la idea era que uses /verify {ticketNumber} o /verify {1} {2} {3} {4} {5}');
+        context.reply('la idea era que uses /verify {ticketNumber} o {1} {2} {3} {4} {5}');
         return;
     }
 
