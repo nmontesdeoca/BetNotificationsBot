@@ -2,8 +2,6 @@ const request = require('request');
 const env = require('jsdom').env;
 const jQuery = require('jquery');
 
-const firebase = require('../firebase');
-
 const HOST = 'www3.labanca.com.uy';
 const DOMAIN = `http://${HOST}`;
 const REFERER = `${DOMAIN}/resultados/cincodeoro`;
@@ -22,36 +20,36 @@ module.exports = {
  * @return {Promise}
  */
 function getNextDrawDate() {
-    // return firebase.getNextDrawDate();
-    return new Promise((resolve, reject) => {
-        firebase.getNextDrawDate().then(nextDrawDate => {
-            if (nextDrawDate && Date.now() < nextDrawDate) {
-                const date = new Date(nextDrawDate);
-                const [day, month, year] = [date.getDate(), date.getMonth() + 1, date.getFullYear()];
+    return new Promise(getNextDrawDateExecutor);
+}
 
-                resolve(`${day}/${month}/${year}`);
-            } else {
-                request(DOMAIN, (error, response, body) => {
-                    if (!error && response.statusCode == 200) {
-                        const match = body.match(/Próximo Sorteo: (\d{1,2}\/\d{2}\/\d{2,4})/);
+/**
+ * Executor for getNextDrawDate function
+ * @param  {Promise.resolve} resolve
+ * @param  {Promise.reject} reject
+ * @return {void}
+ */
+function getNextDrawDateExecutor(resolve, reject) {
+    request(DOMAIN, (error, response, body) => {
+        if (!error && response.statusCode == 200) {
+            const match = body.match(/Próximo Sorteo: (\d{1,2}\/\d{2}\/\d{2,4})/);
 
-                        if (match && match.length && match[1]) {
-                            const dateRaw = match[1];
-                            const [day, month, year] = dateRaw.split('/');
-                            const date = new Date(`${[month, day, year].join('/')} 23:59:59`);
-                            const timestamp = date.getTime();
+            if (match && match.length && match[1]) {
+                const dateRaw = match[1];
+                const [day, month, year] = dateRaw.split('/');
+                const date = new Date(`${[month, day, year].join('/')} 23:59:59`);
+                const timestamp = date.getTime();
 
-                            firebase.setNextDrawDate(timestamp);
-                            resolve(`${day}/${month}/${year}`);
-                        } else {
-                            resolve('Preguntale a la banca que no me quizo decir');
-                        }
-                    } else {
-                        reject(error, response);
-                    }
+                resolve({
+                    date: `${day}/${month}/${year}`,
+                    timestamp
                 });
+            } else {
+                resolve('Preguntale a la banca que no me quizo decir');
             }
-        }).catch(error => console.error(error));
+        } else {
+            reject(error, response);
+        }
     });
 }
 
@@ -64,6 +62,13 @@ function checkLastDraw(numbers) {
     return new Promise(checkLastDrawExecutor.bind(this, numbers));
 }
 
+/**
+ * Executor function for checkLastDraw function
+ * @param  {Array} numbers
+ * @param  {Promise.resolve} resolve
+ * @param  {Promise.reject} reject
+ * @return {void}
+ */
 function checkLastDrawExecutor(numbers, resolve, reject) {
     getAuthData()
         .then(authData => {
@@ -82,10 +87,22 @@ function checkLastDrawExecutor(numbers, resolve, reject) {
         .catch(error => console.error(error));
 }
 
+/**
+ * Get a promise that resolves with the result for a specific set of numbers
+ * @param  {Object} options
+ * @return {Promise}
+ */
 function verifyNumbers(options) {
     return new Promise(verifyNumbersExecutor.bind(this, options));
 }
 
+/**
+ * Executor function for the verifyNumbers function
+ * @param  {Object} options
+ * @param  {Promise.resolve} resolve
+ * @param  {Promise.reject} reject
+ * @return {void}
+ */
 function verifyNumbersExecutor(options, resolve, reject) {
     const {authenticityToken, drawDate, number} = options;
 
@@ -139,10 +156,20 @@ function verifyNumbersExecutor(options, resolve, reject) {
     });
 }
 
+/**
+ * Get a promise that resolves with a token and a date
+ * @return {Promise}
+ */
 function getAuthData() {
     return new Promise(getAuthDataExecutor);
 }
 
+/**
+ * Executor function for the getAuthData function
+ * @param  {Promise.resolve} resolve
+ * @param  {Promise.reject} reject
+ * @return {void}
+ */
 function getAuthDataExecutor(resolve, reject) {
     return request(RESULTS_URL, (error, response, body) => {
         if (!error && response.statusCode == 200) {

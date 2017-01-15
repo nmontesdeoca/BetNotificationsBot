@@ -6,8 +6,6 @@ const labanca = require('../labanca');
 
 const {BOT_TOKEN, URL, PORT, NODE_ENV} = process.env;
 
-const capitalize = text => text && (text[0].toUpperCase() + text.slice(1));
-
 module.exports = {
     createBot,
     configureBot,
@@ -68,27 +66,49 @@ function start(bot) {
     }
 }
 
+/**
+ * Handler function for the start command
+ * @param  {Object} context
+ * @return {void}
+ */
 function startHandler(context) {
     context.reply('Hola 👋');
 }
 
+/**
+ * Handler function for the who command
+ * @param  {Object} context
+ * @return {void}
+ */
 function whoHandler(context) {
     firebase.getNextPlayer()
+        .then(index => players.getPlayer(index))
         .then(player => context.reply(`${capitalize(player)}, no te olvides bolu!`))
         .catch(error => console.error(error));
 }
 
+/**
+ * Handler function for the last command
+ * @param  {Object} context
+ * @return {void}
+ */
 function lastHandler(context) {
     firebase.getLastPlayer()
+        .then(index => players.getPlayer(index))
         .then(player => context.reply(`${capitalize(player)}, ahora tranqui`))
         .catch(error => console.error(error));
 }
 
+/**
+ * Handler function for the set command
+ * @param  {Object} context
+ * @return {void}
+ */
 function setHandler(context) {
     Promise
         .all([
-            firebase.getNextPlayer(),
-            firebase.getLastPlayer()
+            firebase.getNextPlayer().then(index => players.getPlayer(index)).catch(error => console.error(error)),
+            firebase.getLastPlayer().then(index => players.getPlayer(index)).catch(error => console.error(error))
         ])
         .then(([currentNextPlayer, currentLastPlayer]) => {
             // textRaw = '/set nico'
@@ -114,8 +134,8 @@ function setHandler(context) {
                 return `${capitalize(nextPlayer)} fue el último en jugar, che ${capitalize(nextPlayer)} me parece que estos locos te quieren cagar`;
             }
 
-            firebase.setNextPlayer(nextPlayer);
-            firebase.setLastPlayer(currentNextPlayer);
+            firebase.setNextPlayer(players.getPlayerIndex(nextPlayer));
+            firebase.setLastPlayer(players.getPlayerIndex(currentNextPlayer));
 
             return 'Ok 👍';
         })
@@ -125,12 +145,35 @@ function setHandler(context) {
         .catch(error => console.error(error));
 }
 
+/**
+ * Handler function for the when command
+ * @param  {Object} context
+ * @return {void}
+ */
 function whenHandler(context) {
-    labanca.getNextDrawDate()
-        .then(when => context.reply(when))
-        .catch(error => console.error(error));
+    firebase.getNextDrawDate()
+        .then(nextDrawDate => {
+            if (nextDrawDate && Date.now() < nextDrawDate) {
+                const date = new Date(nextDrawDate);
+                const [day, month, year] = [date.getDate(), date.getMonth() + 1, date.getFullYear()];
+
+                context.reply(`${day}/${month}/${year}`);
+            } else {
+                labanca.getNextDrawDate()
+                    .then(when => {
+                        context.reply(when.date);
+                        firebase.setNextDrawDate(when.timestamp);
+                    })
+                    .catch(error => console.error(error));
+            }
+        });
 }
 
+/**
+ * Handler function for the check command
+ * @param  {Object} context
+ * @return {void}
+ */
 function checkHandler(context) {
     firebase.getNumbers()
         .then(numbers => {
@@ -146,6 +189,11 @@ function checkHandler(context) {
         .catch(error => console.error(error));
 }
 
+/**
+ * Handler function for the verify command
+ * @param  {Object} context
+ * @return {void}
+ */
 function verifyHandler(context) {
     const textRaw = context.message && context.message.text;
     const text = textRaw.split(' ');
@@ -161,4 +209,16 @@ function verifyHandler(context) {
     labanca.verifyTicket(ticketNumber)
         .then(result => context.reply(result.result))
         .catch(error => console.error(error));
+}
+
+/**
+ * Capitalizes a text
+ * @param  {String} text
+ * @return {String}
+ */
+function capitalize(text) {
+    if (!text) {
+        return '';
+    }
+    return `${text[0].toUpperCase()}${text.slice(1)}`;
 }

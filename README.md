@@ -33,12 +33,12 @@ If you want to collaborate on this project, you need to follow the next steps:
 ###### public
 * login() - Do login and returns a Promise
 * getPlayers() - Get a promise that resolves with the list of players
-* getNextPlayer() - Get a promise that resolves with the name of the next player
-* getLastPlayer() - Get a promise that resolves with the name of the last player
-* getNextDrawDate() - Get a promise that resolves with the name of the last player
+* getNextPlayer() - Get a promise that resolves with the index of the next player
+* getLastPlayer() - Get a promise that resolves with the index of the last player
+* getNextDrawDate() - Get a promise that resolves with the next draw date
 * setNextDrawDate(nextDrawDate) - Set in firebase the next draw date
-* setNextPlayer(name) - Set in firebase the next player
-* setLastPlayer(name) - Set in firebase the last player
+* setNextPlayer(index) - Set in firebase the next player
+* setLastPlayer(index) - Set in firebase the last player
 * getNumbers() - Get a promise that resolves with the list of our numbers
 
 ###### private
@@ -47,7 +47,7 @@ If you want to collaborate on this project, you need to follow the next steps:
 * getLastPlayerExecutor(resolve, reject) - Executor function for the getLastPlayer function
 * getNextDrawDateExecutor(resolve, reject) - Executor function for the getNextDrawDate function
 * getNumbersExecutor(resolve, reject) - Executor function for the getNumbers function
-* getSnapshotValue(resolve, reject, path, processResultFunction) - Common function to be used by the Executors
+* getSnapshotValue(resolve, reject, path) - Common function to be used by the Executors
 
 ---
 #### labanca
@@ -58,6 +58,7 @@ If you want to collaborate on this project, you need to follow the next steps:
 * verifyTicket(ticketNumber) - Get a promise that resolves to an object containing the result and/or prize won for the ticketNumber provided
 
 ###### private
+* getNextDrawDateExecutor(resolve, reject) - Executor function for getNextDrawDate function
 * getAuthData() - Get a promise that resolves with a token and a date
 * getAuthDataExecutor(resolve, reject) - Executor function for the getAuthData function
 * verifyNumbers(options) - Get a promise that resolves with the result for a specific set of numbers
@@ -82,13 +83,14 @@ If you want to collaborate on this project, you need to follow the next steps:
 * setHandler(context) - Handler function for the set command
 * whenHandler(context) - Handler function for the when command
 * checkHandler(context) - Handler function for the check command
+* capitalize(text) - Capitalizes a text
 
 ---
 #### players
 
 ###### public
-* getPlayer(index) - Get a promise that resolves with the name of the player at the specified index
-* getPlayerIndex(name) - Get a promise that resolves with the index of the player with the specified name
+* getPlayer(index) - Returns the name of the player at the specified index
+* getPlayerIndex(name) - Returns the index of the player with the specified name
 * setPlayers(result) - Set in a global players variable the players registered in firebase
 * isValidPlayer(name) - Returns a boolean indicating if it is a valid player name
 

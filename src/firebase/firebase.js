@@ -1,5 +1,3 @@
-const players = require('../players');
-
 const {FIREBASE_URL, FIREBASE_USER_EMAIL, FIREBASE_USER_PASSWORD, FIREBASE_API_KEY} = process.env;
 
 const firebase = require('firebase').initializeApp({
@@ -35,42 +33,66 @@ function getPlayers() {
     return new Promise(getPlayersExecutor);
 }
 
+/**
+ * Executor function for the getPlayers function
+ * @param  {Promise.resolve} resolve
+ * @param  {Promise.reject} reject
+ * @return {void}
+ */
 function getPlayersExecutor(resolve, reject) {
     getSnapshotValue(resolve, reject, '/players');
 }
 
 /**
- * Get a promise that resolves with the name of the next player
+ * Get a promise that resolves with the index of the next player
  * @return {Promise}
  */
 function getNextPlayer() {
     return new Promise(getNextPlayerExecutor);
 }
 
+/**
+ * Executor function for the getNextPlayer function
+ * @param  {Promise.resolve} resolve
+ * @param  {Promise.reject} reject
+ * @return {void}
+ */
 function getNextPlayerExecutor(resolve, reject) {
-    getSnapshotValue(resolve, reject, '/nextPlayer', value => players.getPlayer(value));
+    getSnapshotValue(resolve, reject, '/nextPlayer');
 }
 
 /**
- * Get a promise that resolves with the name of the last player
+ * Get a promise that resolves with the index of the last player
  * @return {Promise}
  */
 function getLastPlayer() {
     return new Promise(getLastPlayerExecutor);
 }
 
+/**
+ * Executor function for the getLastPlayer function
+ * @param  {Promise.resolve} resolve
+ * @param  {Promise.reject} reject
+ * @return {void}
+ */
 function getLastPlayerExecutor(resolve, reject) {
-    getSnapshotValue(resolve, reject, '/lastPlayer', value => players.getPlayer(value));
+    getSnapshotValue(resolve, reject, '/lastPlayer');
 }
 
 /**
- * Get a promise that resolves with the name of the last player
+ * Get a promise that resolves with the next draw date
  * @return {Promise}
  */
 function getNextDrawDate() {
     return new Promise(getNextDrawDateExecutor);
 }
 
+/**
+ * Executor function for the getNextDrawDate function
+ * @param  {Promise.resolve} resolve
+ * @param  {Promise.reject} reject
+ * @return {void}
+ */
 function getNextDrawDateExecutor(resolve, reject) {
     getSnapshotValue(resolve, reject, '/nextDrawDate');
 }
@@ -85,18 +107,18 @@ function setNextDrawDate(nextDrawDate) {
 
 /**
  * Set in firebase the next player
- * @param {String} name
+ * @param {String} index
  */
-function setNextPlayer(name) {
-    firebase.database().ref('/nextPlayer').set(players.getPlayerIndex(name));
+function setNextPlayer(index) {
+    firebase.database().ref('/nextPlayer').set(index);
 }
 
 /**
  * Set in firebase the last player
- * @param {String} name
+ * @param {String} index
  */
-function setLastPlayer(name) {
-    firebase.database().ref('/lastPlayer').set(players.getPlayerIndex(name));
+function setLastPlayer(index) {
+    firebase.database().ref('/lastPlayer').set(index);
 }
 
 /**
@@ -107,18 +129,27 @@ function getNumbers() {
     return new Promise(getNumbersExecutor);
 }
 
+/**
+ * Executor function for the getNumbers function
+ * @param  {Promise.resolve} resolve
+ * @param  {Promise.reject} reject
+ * @return {void}
+ */
 function getNumbersExecutor(resolve, reject) {
     getSnapshotValue(resolve, reject, '/numbers');
 }
 
-function getSnapshotValue(resolve, reject, path, processResultFunction) {
+/**
+ * Common function to be used by the Executors
+ * @param  {Promise.resolve} resolve
+ * @param  {Promise.reject} reject
+ * @param  {String} path
+ * @return {void}
+ */
+function getSnapshotValue(resolve, reject, path) {
     firebase.database().ref(path).once('value')
         .then(
-            snapshot => resolve(
-                processResultFunction ?
-                processResultFunction(snapshot.val()) :
-                snapshot.val()
-            ),
+            snapshot => resolve(snapshot.val()),
             error => reject(error)
         )
         .catch(error => console.error(error));
