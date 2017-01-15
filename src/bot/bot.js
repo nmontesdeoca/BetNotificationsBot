@@ -178,12 +178,7 @@ function checkHandler(context) {
     firebase.getNumbers()
         .then(numbers => {
             labanca.checkLastDraw(numbers)
-                .then(results => {
-                    // TODO: fix this fast results[0]
-                    context.reply(`Sorteo de la fecha: ${results[0].date}`)
-                        .then(() => results.map(result => context.reply(`${result.numbers} - ${result.result}`)))
-                        .catch(error => console.error(error));
-                })
+                .then(results => displayLastDrawResults(context, results))
                 .catch(error => console.error(error));
         })
         .catch(error => console.error(error));
@@ -199,16 +194,26 @@ function verifyHandler(context) {
     const text = textRaw.split(' ');
     let ticketNumber;
 
-    if (!text || text.length !== 2) {
-        context.reply('la idea era que uses /verify {ticketNumber}');
+    if (!text || (text.length !== 2 && text.length !== 6)) {
+        context.reply('la idea era que uses /verify {ticketNumber} o /verify {1} {2} {3} {4} {5}');
         return;
     }
 
-    ticketNumber = text[1];
+    if (text.length === 2) {
+        ticketNumber = text[1];
 
-    labanca.verifyTicket(ticketNumber)
-        .then(result => context.reply(result.result))
-        .catch(error => console.error(error));
+        labanca.verifyTicket(ticketNumber)
+            .then(result => context.reply(result.result))
+            .catch(error => console.error(error));
+    } else {
+         // text.length === 6
+         let numbers = [text.slice(1)];
+
+         labanca.checkLastDraw(numbers)
+             .then(results => displayLastDrawResults(context, results))
+             .catch(error => console.error(error));
+
+    }
 }
 
 /**
@@ -221,4 +226,17 @@ function capitalize(text) {
         return '';
     }
     return `${text[0].toUpperCase()}${text.slice(1)}`;
+}
+
+/**
+ * Sends a message with the las draw results
+ * @param  {Object} context
+ * @param  {Array} results
+ * @return {void}
+ */
+function displayLastDrawResults(context, results) {
+    // TODO: fix this fast results[0]
+    context.reply(`Sorteo de la fecha: ${results[0].date}`)
+        .then(() => results.map(result => context.reply(`${result.numbers} - ${result.result}`)))
+        .catch(error => console.error(error));
 }

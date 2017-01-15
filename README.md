@@ -84,6 +84,7 @@ If you want to collaborate on this project, you need to follow the next steps:
 * whenHandler(context) - Handler function for the when command
 * checkHandler(context) - Handler function for the check command
 * capitalize(text) - Capitalizes a text
+* displayLastDrawResults(context, results) - Sends a message with the las draw results
 
 ---
 #### players
