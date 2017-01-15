@@ -50,6 +50,7 @@ function configureCommands(bot) {
     bot.command('set', setHandler);
     bot.command('when', whenHandler);
     bot.command('check', checkHandler);
+    bot.command('verify', verifyHandler);
 }
 
 /**
@@ -141,5 +142,22 @@ function checkHandler(context) {
                 })
                 .catch(error => console.error(error));
         })
+        .catch(error => console.error(error));
+}
+
+function verifyHandler(context) {
+    const textRaw = context.message && context.message.text;
+    const text = textRaw.split(' ');
+    let ticketNumber;
+
+    if (!text || text.length !== 2) {
+        context.reply('la idea era que uses /verify {ticketNumber}');
+        return;
+    }
+
+    ticketNumber = text[1];
+
+    labanca.verifyTicket(ticketNumber)
+        .then(result => context.reply(result.result))
         .catch(error => console.error(error));
 }

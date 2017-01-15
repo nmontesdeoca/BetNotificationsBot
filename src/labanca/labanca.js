@@ -209,10 +209,12 @@ function verifyTicketExecutor(ticketNumber, resolve, reject) {
                     env(partialBody, (envError, window) => {
                         if (!envError) {
                             const $ = jQuery(window);
+                            const result = $('.resultado').text().trim() || $('.error').text().trim();
+
                             resolve({
                                 date: drawDate,
                                 ticketNumber,
-                                result: $('.resultado').text().trim()
+                                result
                             });
                         } else {
                             reject(envError)
