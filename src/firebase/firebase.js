@@ -7,11 +7,8 @@ const firebase = require('firebase').initializeApp({
     databaseURL: FIREBASE_URL
 });
 
-firebase.auth()
-    .signInWithEmailAndPassword(FIREBASE_USER_EMAIL, FIREBASE_USER_PASSWORD)
-    .catch(error => console.error(error));
-
 module.exports = {
+    login,
     getPlayers,
     getNextPlayer,
     getLastPlayer,
@@ -21,6 +18,14 @@ module.exports = {
     setNextDrawDate,
     getNumbers
 };
+
+/**
+ * do login and returns the promise
+ * @return {Promise}
+ */
+function login() {
+    return firebase.auth().signInWithEmailAndPassword(FIREBASE_USER_EMAIL, FIREBASE_USER_PASSWORD);
+}
 
 /**
  * Get a promise that resolves with the list of players

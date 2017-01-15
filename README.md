@@ -21,6 +21,7 @@ If you want to collaborate on this project, you need to follow the next steps:
 #### firebase
 
 ###### public
+* login() - Do login and returns a Promise
 * getPlayers() - Get a promise that resolves with the list of players
 * getNextPlayer() - Get a promise that resolves with the name of the next player
 * getLastPlayer() - Get a promise that resolves with the name of the last player
