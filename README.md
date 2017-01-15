@@ -1,6 +1,16 @@
 # BetNotificationsBot
 Simple Telegram Bot modular and super cool.
 
+### Bot commands
+
+* /start
+* /who
+* /set {name}
+* /when
+* /last
+* /check
+* /verify {ticketNumber}
+
 ### Development contribution
 
 If you want to collaborate on this project, you need to follow the next steps:
