@@ -161,8 +161,12 @@ function whenHandler(context) {
             } else {
                 labanca.getNextDrawDate()
                     .then(when => {
-                        context.reply(when.date);
-                        firebase.setNextDrawDate(when.timestamp);
+                        if (when.error) {
+                            context.reply(when.message);
+                        } else {
+                            context.reply(when.date);
+                            firebase.setNextDrawDate(when.timestamp);
+                        }
                     })
                     .catch(error => console.error(error));
             }

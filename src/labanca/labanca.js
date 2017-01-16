@@ -37,7 +37,7 @@ function getNextDrawDateExecutor(resolve, reject) {
             if (match && match.length && match[1]) {
                 const dateRaw = match[1];
                 const [day, month, year] = dateRaw.split('/');
-                const date = new Date(`${[month, day, year].join('/')} 23:59:59`);
+                const date = new Date(`${[month, day, year].join('/')} 22:00:00 GMT-0300`);
                 const timestamp = date.getTime();
 
                 resolve({
@@ -45,7 +45,10 @@ function getNextDrawDateExecutor(resolve, reject) {
                     timestamp
                 });
             } else {
-                resolve('Preguntale a la banca que no me quizo decir');
+                resolve({
+                    error: true,
+                    message: 'Preguntale a la banca que no me quizo decir'
+                });
             }
         } else {
             reject(error, response);
