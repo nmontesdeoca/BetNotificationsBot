@@ -3,7 +3,7 @@ const env = require('jsdom').env;
 const jQuery = require('jquery');
 
 const HOST = 'www3.labanca.com.uy';
-const DOMAIN = `http://${HOST}`;
+const DOMAIN = `https://${HOST}`;
 const REFERER = `${DOMAIN}/resultados/cincodeoro`;
 const RESULTS_URL = REFERER;
 const VERIFY_URL = `${RESULTS_URL}/verificar`;
