@@ -11,6 +11,7 @@ const VERIFY_TICKET_URL = `${RESULTS_URL}/verificar_jugada_boleta`;
 
 module.exports = {
     getNextDrawDate,
+    getLastDrawDate,
     checkLastDraw,
     verifyTicket
 };
@@ -33,6 +34,47 @@ function getNextDrawDateExecutor(resolve, reject) {
     request(DOMAIN, (error, response, body) => {
         if (!error && response.statusCode == 200) {
             const match = body.match(/Próximo Sorteo: (\d{1,2}\/\d{2}\/\d{2,4})/);
+
+            if (match && match.length && match[1]) {
+                const dateRaw = match[1];
+                const [day, month, year] = dateRaw.split('/');
+                const date = new Date(`${[month, day, year].join('/')} 22:00:00 GMT-0300`);
+                const timestamp = date.getTime();
+
+                resolve({
+                    date: `${day}/${month}/${year}`,
+                    timestamp
+                });
+            } else {
+                resolve({
+                    error: true,
+                    message: 'Preguntale a la banca que no me quizo decir'
+                });
+            }
+        } else {
+            reject(error, response);
+        }
+    });
+}
+
+/**
+ * Get a promise that resolves with the date of the last draw
+ * @return {Promise}
+ */
+function getLastDrawDate() {
+    return new Promise(getLastDrawDateExecutor);
+}
+
+/**
+ * Executor for getLastDrawDate function
+ * @param  {Promise.resolve} resolve
+ * @param  {Promise.reject} reject
+ * @return {void}
+ */
+function getLastDrawDateExecutor(resolve, reject) {
+    request(RESULTS_URL, (error, response, body) => {
+        if (!error && response.statusCode == 200) {
+            const match = body.match(/selected">\w{3}\s(\d{1,2}\/\d{2}\/\d{2,4})/);
 
             if (match && match.length && match[1]) {
                 const dateRaw = match[1];
